@@ -6,7 +6,7 @@ The test file is here: [app/src/test/java/com/pqc/bc/demo/EncryptionTest.kt](htt
 
 
 Tutorial video:
-- 
+- https://youtu.be/uR2Wm03Puzw
 
 Some references:
 - Bouncy Castle: https://new.bouncycastle.org/
