@@ -81,5 +81,43 @@ class EncryptionTest {
 
     }
 
+    @Test
+    fun testKeypairEncoding(){
+        val base64PublicKey = Encryption.keyBytesToBase64(aliceKp.public.encoded)
+        val publicKeyBytes = Encryption.base64ToKeyBytes(base64PublicKey)
+
+        val base64PrivateKey = Encryption.keyBytesToBase64(aliceKp.private.encoded)
+        val privateKeyBytes = Encryption.base64ToKeyBytes(base64PrivateKey)
+
+        assertArrayEquals(aliceKp.public.encoded, publicKeyBytes)
+        assertArrayEquals(aliceKp.private.encoded, privateKeyBytes)
+    }
+
+    @Test
+    fun testRecoverSessionKey(){
+        val sessionKey = Encryption.generateSessionKey()
+        val base64SessionKey = Encryption.keyBytesToBase64(sessionKey.encoded)
+        val sessionKeyBytes = Encryption.base64ToKeyBytes(base64SessionKey)
+
+        val recoveredSessionKey = Encryption.recoverSessionkey(sessionKeyBytes)
+        assertArrayEquals(sessionKey.encoded, recoveredSessionKey.encoded)
+    }
+
+    @Test
+    fun testRecoverKeypair(){
+        val base64PublicKey = Encryption.keyBytesToBase64(aliceKp.public.encoded)
+        val publicKeyBytes = Encryption.base64ToKeyBytes(base64PublicKey)
+
+        val base64PrivateKey = Encryption.keyBytesToBase64(aliceKp.private.encoded)
+        val privateKeyBytes = Encryption.base64ToKeyBytes(base64PrivateKey)
+
+        val recoveredPublicKey = Encryption.recoverPublicKey(publicKeyBytes)
+        val recoveredPrivateKey = Encryption.recoverPrivateKey(privateKeyBytes)
+
+        assertArrayEquals(aliceKp.public.encoded, recoveredPublicKey.encoded)
+        assertArrayEquals(aliceKp.private.encoded, recoveredPrivateKey.encoded)
+
+    }
+
 
 }

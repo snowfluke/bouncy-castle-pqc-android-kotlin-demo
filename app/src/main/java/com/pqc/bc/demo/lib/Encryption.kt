@@ -3,14 +3,19 @@ package com.pqc.bc.demo.lib
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec
+import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.Security
+import java.security.spec.PKCS8EncodedKeySpec
+import java.security.spec.X509EncodedKeySpec
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
 
 class Encryption {
 
@@ -71,6 +76,33 @@ class Encryption {
             cipher.init(Cipher.DECRYPT_MODE, sessionKey)
 
             return cipher.doFinal(cipherText).decodeToString()
+        }
+
+        fun keyBytesToBase64(key: ByteArray): String{
+            return Base64.getEncoder().encodeToString(key)
+        }
+
+        fun base64ToKeyBytes(base64: String): ByteArray {
+            return Base64.getDecoder().decode(base64)
+        }
+
+
+        fun recoverPublicKey(pubKey: ByteArray): PublicKey {
+            val keyFactory = KeyFactory.getInstance(ASYM_ALGO, PQC_PROVIDER_NAME)
+            val encodedKey = X509EncodedKeySpec(pubKey)
+
+            return  keyFactory.generatePublic(encodedKey)
+        }
+
+        fun recoverPrivateKey(privKey: ByteArray): PrivateKey {
+            val keyFactory = KeyFactory.getInstance(ASYM_ALGO, PQC_PROVIDER_NAME)
+            val encodedKey = PKCS8EncodedKeySpec(privKey)
+
+            return  keyFactory.generatePrivate(encodedKey)
+        }
+
+        fun recoverSessionkey(key: ByteArray): SecretKey {
+            return SecretKeySpec(key, SYM_ALGO)
         }
 
     }
